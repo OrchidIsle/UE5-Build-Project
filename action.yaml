@@ -41,30 +41,30 @@ inputs:
 
 runs:
   using: 'composite'
-steps:
-  - shell: powershell
-    run: |
-      $runUatPath = "${{ inputs.RUNUAT_PATH }}"
-      $uprojectPath = "${{ inputs.UPROJECT_PATH }}"
-      $buildConfig = "${{ inputs.BUILD_CONFIG }}"
-      $platform = "${{ inputs.PLATFORM }}"
-      $server = ${{ inputs.SERVER }}
-      $cook = ${{ inputs.COOK }}
-      $stage = ${{ inputs.STAGE }}
-      $pak = ${{ inputs.PAK }}
-      $package = ${{ inputs.PACKAGE }}
-
-      $serverArg = if ($server -eq 'true') { "-server -serverplatform=$platform -noclient" } else { "" }
-      $cookArg = if ($cook -eq 'true') { "-cook" } else { "" }
-      $stageArg = if ($stage -eq 'true') { "-stage" } else { "" }
-      $pakArg = if ($pak -eq 'true') { "-pak" } else { "" }
-      $packageArg = if ($package -eq 'true') { "-package" } else { "" }
-
-      $command = "& `"$runUatPath`" BuildCookRun " +
-                "-project=`"$uprojectPath`" " +
-                "-clientconfig=$buildConfig -serverconfig=$buildConfig -platform=$platform " +
-                "$serverArg $cookArg $stageArg $pakArg $packageArg " +
-                "-noP4 -build"
-      
-      Invoke-Expression $command
-
+  steps:
+    - shell: powershell
+      run: |
+        $runUatPath = "${{ inputs.RUNUAT_PATH }}"
+        $uprojectPath = "${{ inputs.UPROJECT_PATH }}"
+        $buildConfig = "${{ inputs.BUILD_CONFIG }}"
+        $platform = "${{ inputs.PLATFORM }}"
+        $server = ${{ inputs.SERVER }}
+        $cook = ${{ inputs.COOK }}
+        $stage = ${{ inputs.STAGE }}
+        $pak = ${{ inputs.PAK }}
+        $package = ${{ inputs.PACKAGE }}
+  
+        $serverArg = if ($server -eq 'true') { "-server -serverplatform=$platform -noclient" } else { "" }
+        $cookArg = if ($cook -eq 'true') { "-cook" } else { "" }
+        $stageArg = if ($stage -eq 'true') { "-stage" } else { "" }
+        $pakArg = if ($pak -eq 'true') { "-pak" } else { "" }
+        $packageArg = if ($package -eq 'true') { "-package" } else { "" }
+  
+        $command = "& `"$runUatPath`" BuildCookRun " +
+                  "-project=`"$uprojectPath`" " +
+                  "-clientconfig=$buildConfig -serverconfig=$buildConfig -platform=$platform " +
+                  "$serverArg $cookArg $stageArg $pakArg $packageArg " +
+                  "-noP4 -build"
+        
+        Invoke-Expression $command
+  
