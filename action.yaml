@@ -39,7 +39,6 @@ inputs:
     default: 'false'
 runs:
   using: 'composite'
-  shell: powershell
   steps:
     - run: |
         & "${{ inputs.RUNUAT_PATH }}" BuildCookRun `
@@ -51,3 +50,4 @@ runs:
         ${{ if eq(inputs.STAGE, 'true') }} -stage ${{ endif }}
         ${{ if eq(inputs.PAK, 'true') }} -pak ${{ endif }}        
         ${{ if eq(inputs.PACKAGE, 'true') }} -package ${{ endif }}
+    shell: powershell
