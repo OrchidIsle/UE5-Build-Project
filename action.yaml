@@ -44,27 +44,18 @@ runs:
   steps:
     - shell: powershell
       run: |
-    run: |
-      $extraArgs = ""
-      if (${{ inputs.SERVER }} -eq 'true') {
-        $extraArgs += "-server -serverplatform=${{ inputs.PLATFORM }} -noclient "
-      }
-      if (${{ inputs.COOK }} -eq 'true') {
-        $extraArgs += "-cook "
-      }
-      if (${{ inputs.STAGE }} -eq 'true') {
-        $extraArgs += "-stage "
-      }
-      if (${{ inputs.PAK }} -eq 'true') {
-        $extraArgs += "-pak "
-      }
-      if (${{ inputs.PACKAGE }} -eq 'true') {
-        $extraArgs += "-package "
-      }
-
-      $command = "& `"${{ inputs.RUNUAT_PATH }}`" BuildCookRun " +
-                "-project=`"${{ inputs.UPROJECT_PATH }}`" " +
-                "-clientconfig=${{ inputs.BUILD_CONFIG }} -serverconfig=${{ inputs.BUILD_CONFIG }} -platform=${{ inputs.PLATFORM }} " +
-                $extraArgs +
-                "-noP4 -build"
-      Invoke-Expression $command
+        $runUatPath = "${{ inputs.RUNUAT_PATH }}"
+        $uprojectPath = "${{ inputs.UPROJECT_PATH }}"
+        $buildConfig = "${{ inputs.BUILD_CONFIG }}"
+        $platform = "${{ inputs.PLATFORM }}"
+        $serverArg = if (${{ inputs.SERVER }} -eq 'true') { "-server -serverplatform=$platform -noclient" } else { "" }
+        $cookArg = if (${{ inputs.COOK }} -eq 'true') { "-cook" } else { "" }
+        $stageArg = if (${{ inputs.STAGE }} -eq 'true') { "-stage" } else { "" }
+        $pakArg = if (${{ inputs.PAK }} -eq 'true') { "-pak" } else { "" }
+        $packageArg = if (${{ inputs.PACKAGE }} -eq 'true') { "-package" } else { "" }
+        $command = "& `"$runUatPath`" BuildCookRun " +
+                  "-project=`"$uprojectPath`" " +
+                  "-clientconfig=$buildConfig -serverconfig=$buildConfig -platform=$platform " +
+                  "$serverArg $cookArg $stageArg $pakArg $packageArg " +
+                  "-noP4 -build"
+        Invoke-Expression $command
