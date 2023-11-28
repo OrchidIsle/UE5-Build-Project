@@ -1,5 +1,9 @@
 name: 'UE5-Build-Project'
 description: 'Cook, stage, and package projects for Unreal Engine'
+author: 'Orchid Isle Games'
+branding:
+  icon: 'anchor'
+  color: 'green' # You can use a specific shade of green like '008000' if you prefer
 inputs:
   RUNUAT_PATH:
     description: 'Path to RunUAT.bat'
