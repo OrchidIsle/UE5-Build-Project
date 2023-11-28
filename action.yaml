@@ -42,7 +42,8 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    - run: |
+    - shell: powershell
+      run: |
         & "${{ inputs.RUNUAT_PATH }}" BuildCookRun `
         -project="${{ inputs.UPROJECT_PATH }}" `
         -clientconfig=${{ inputs.BUILD_CONFIG }} -serverconfig=${{ inputs.BUILD_CONFIG }} -platform=${{ inputs.PLATFORM }} `
