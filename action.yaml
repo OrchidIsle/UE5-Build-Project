@@ -1,0 +1,48 @@
+name: 'UE5-Build-Project'
+description: 'Cook, stage, and package projects for Unreal Engine'
+inputs:
+  RUNUAT_PATH:
+    description: 'Path to RunUAT.bat'
+    required: true
+  UPROJECT_PATH:
+    description: 'Path to the .uproject file'
+    required: true
+  BUILD_CONFIG:
+    description: 'Configuration to use'
+    required: true
+  PLATFORM:
+    description: 'Platform to build for'
+    required: true
+  COOK:
+    description: 'Whether to cook'
+    required: false
+    default: 'true'
+  STAGE:
+    description: 'Whether to stage'
+    required: false
+    default: 'true'
+  PACKAGE:
+    description: 'Whether to package'
+    required: false
+    default: 'false'
+  PAK:
+    description: 'Whether to pak files'
+    required: false
+    default: 'false'
+  SERVER:
+    description: 'Whether to include the server'
+    required: false
+    default: 'false'
+runs:
+  using: 'composite'
+  steps:
+    - run: |
+        & "${{ inputs.RUNUAT_PATH }}" BuildCookRun `
+        -project="${{ inputs.UPROJECT_PATH }}" `
+        -clientconfig=${{ inputs.BUILD_CONFIG }} -serverconfig=${{ inputs.BUILD_CONFIG }} -platform=${{ inputs.PLATFORM }} `
+        ${{ if eq(inputs.SERVER, 'true') }} -server -serverplatform=${{ inputs.PLATFORM }} -noclient ${{ endif }}
+        -noP4 -build `
+        ${{ if eq(inputs.COOK, 'true') }} -cook ${{ endif }}
+        ${{ if eq(inputs.STAGE, 'true') }} -stage ${{ endif }}
+        ${{ if eq(inputs.PAK, 'true') }} -pak ${{ endif }}        
+        ${{ if eq(inputs.PACKAGE, 'true') }} -package ${{ endif }}
