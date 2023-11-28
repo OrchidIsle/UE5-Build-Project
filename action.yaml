@@ -44,12 +44,13 @@ runs:
   steps:
     - shell: powershell
       run: |
-        & "${{ inputs.RUNUAT_PATH }}" BuildCookRun `
-        -project="${{ inputs.UPROJECT_PATH }}" `
-        -clientconfig=${{ inputs.BUILD_CONFIG }} -serverconfig=${{ inputs.BUILD_CONFIG }} -platform=${{ inputs.PLATFORM }} `
-        ${{ inputs.SERVER == 'true' && '-server -serverplatform=${{ inputs.PLATFORM }} -noclient' }} 
-        -noP4 -build `
-        ${{ inputs.COOK == 'true' && '-cook' }}
-        ${{ inputs.STAGE == 'true' && '-stage' }}
-        ${{ inputs.PAK == 'true' && '-pak' }}
-        ${{ inputs.PACKAGE == 'true' && '-package' }}
+        $command = "& `"${{ inputs.RUNUAT_PATH }}`" BuildCookRun " +
+        "-project=`"${{ inputs.UPROJECT_PATH }}`" " +
+        "-clientconfig=${{ inputs.BUILD_CONFIG }} -serverconfig=${{ inputs.BUILD_CONFIG }} -platform=${{ inputs.PLATFORM }} " +
+        "${{ inputs.SERVER == 'true' && '-server -serverplatform=' + inputs.PLATFORM + ' -noclient' }} " +
+        "-noP4 -build " +
+        "${{ inputs.COOK == 'true' && '-cook' }} " +
+        "${{ inputs.STAGE == 'true' && '-stage' }} " +
+        "${{ inputs.PAK == 'true' && '-pak' }} " +
+        "${{ inputs.PACKAGE == 'true' && '-package' }}"
+        Invoke-Expression $command
