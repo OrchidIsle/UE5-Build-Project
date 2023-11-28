@@ -39,6 +39,7 @@ inputs:
     default: 'false'
 runs:
   using: 'composite'
+  shell: powershell
   steps:
     - run: |
         & "${{ inputs.RUNUAT_PATH }}" BuildCookRun `
