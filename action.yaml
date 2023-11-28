@@ -44,13 +44,27 @@ runs:
   steps:
     - shell: powershell
       run: |
-        $command = "& `"${{ inputs.RUNUAT_PATH }}`" BuildCookRun " +
-        "-project=`"${{ inputs.UPROJECT_PATH }}`" " +
-        "-clientconfig=${{ inputs.BUILD_CONFIG }} -serverconfig=${{ inputs.BUILD_CONFIG }} -platform=${{ inputs.PLATFORM }} " +
-        "${{ inputs.SERVER == 'true' && '-server -serverplatform=' + inputs.PLATFORM + ' -noclient' }} " +
-        "-noP4 -build " +
-        "${{ inputs.COOK == 'true' && '-cook' }} " +
-        "${{ inputs.STAGE == 'true' && '-stage' }} " +
-        "${{ inputs.PAK == 'true' && '-pak' }} " +
-        "${{ inputs.PACKAGE == 'true' && '-package' }}"
-        Invoke-Expression $command
+    run: |
+      $extraArgs = ""
+      if (${{ inputs.SERVER }} -eq 'true') {
+        $extraArgs += "-server -serverplatform=${{ inputs.PLATFORM }} -noclient "
+      }
+      if (${{ inputs.COOK }} -eq 'true') {
+        $extraArgs += "-cook "
+      }
+      if (${{ inputs.STAGE }} -eq 'true') {
+        $extraArgs += "-stage "
+      }
+      if (${{ inputs.PAK }} -eq 'true') {
+        $extraArgs += "-pak "
+      }
+      if (${{ inputs.PACKAGE }} -eq 'true') {
+        $extraArgs += "-package "
+      }
+
+      $command = "& `"${{ inputs.RUNUAT_PATH }}`" BuildCookRun " +
+                "-project=`"${{ inputs.UPROJECT_PATH }}`" " +
+                "-clientconfig=${{ inputs.BUILD_CONFIG }} -serverconfig=${{ inputs.BUILD_CONFIG }} -platform=${{ inputs.PLATFORM }} " +
+                $extraArgs +
+                "-noP4 -build"
+      Invoke-Expression $command
