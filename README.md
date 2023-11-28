@@ -25,7 +25,7 @@ To use this action in your workflow, include it as a step in your `.github/workf
 
 ```yaml
 - name: Cook, Stage & Package UE Project
-  uses: your-github-username/UE5-Build-Project@v1
+  uses: OrchidIsle/UE5-Build-Project@latest
   with:
     RUNUAT_PATH: 'C:/Unreal Engine/UE5.3_Source/Engine/Build/BatchFiles/RunUAT.bat'
     UPROJECT_PATH: ${{ github.workspace }}/YourGameFolder/MyGame.uproject
