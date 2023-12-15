@@ -38,6 +38,13 @@ inputs:
     description: 'Whether to include the server'
     required: false
     default: 'false'
+  ARCHIVE:
+    description: 'Whether to archive'
+    required: false
+    default: 'false'
+  ARCHIVE_PATH:
+    description: 'Archive Path'
+    required: false
 
 runs:
   using: 'composite'
@@ -53,17 +60,20 @@ runs:
         $stage = "${{ inputs.STAGE }}"
         $pak = "${{ inputs.PAK }}"
         $package = "${{ inputs.PACKAGE }}"
+        $archive = "${{ inputs.ARCHIVE }}"
+        $archivePath = "${{ inputs.ARCHIVE_PATH }}"
   
         $serverArg = if ($server -eq 'true') { "-server -serverplatform=$platform -noclient" } else { "" }
         $cookArg = if ($cook -eq 'true') { "-cook" } else { "" }
         $stageArg = if ($stage -eq 'true') { "-stage" } else { "" }
         $pakArg = if ($pak -eq 'true') { "-pak" } else { "" }
         $packageArg = if ($package -eq 'true') { "-package" } else { "" }
+        $archiveArg = if ($archive -eq 'true') { "-archive -archivedirectory=$archivePath" } else { "" }
   
         $command = "& `"$runUatPath`" BuildCookRun " +
                   "-project=`"$uprojectPath`" " +
                   "-clientconfig=$buildConfig -serverconfig=$buildConfig -platform=$platform " +
-                  "$serverArg $cookArg $stageArg $pakArg $packageArg " +
+                  "$serverArg $cookArg $stageArg $pakArg $packageArg $archiveArg " +
                   "-noP4 -build"
         
         Invoke-Expression $command
