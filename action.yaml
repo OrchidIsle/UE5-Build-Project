@@ -47,9 +47,9 @@ inputs:
     description: 'Archive Path'
     required: false
   ENCRYPT_INI:
-    description: 'Encrypt INI Files"
+    description: 'Encrypt INI Files'
     required: false
-    default: 'true'
+    default: 'false'
   RELEASE:
     description: 'Create Release Version (Enter new release version number)'
     required: false
@@ -91,7 +91,7 @@ runs:
         $archiveArg = if ($archive -eq 'true') { "-archive -archivedirectory=$archivePath" } else { "" }
         $encryptIniArg = if ($encryptIni -eq 'true') { "-encryptinifiles" } else { "" }
         $releaseArg = if ($release -ne 'false') { "-createreleaseversion=$release" } else { "" }
-        $patchArg = if ($release -ne 'false') { "-generatepatch -basedonreleaseversion=$patch" } else { "" }
+        $patchArg = if ($patch -ne 'false') { "-generatepatch -basedonreleaseversion=$patch" } else { "" }
   
         $command = "& `"$runUatPath`" BuildCookRun " +
                   "-project=`"$uprojectPath`" " +
