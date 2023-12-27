@@ -15,6 +15,7 @@ inputs:
   BUILD_CONFIG:
     description: 'Configuration to use'
     required: true
+    default: 'Development'
   PLATFORM:
     description: 'Platform to build for'
     required: true
@@ -45,7 +46,22 @@ inputs:
   ARCHIVE_PATH:
     description: 'Archive Path'
     required: false
-
+  ENCRYPT_INI:
+    description: 'Encrypt INI Files"
+    required: false
+    default: 'true'
+  RELEASE:
+    description: 'Create Release Version (Enter new release version number)'
+    required: false
+    default: 'false'
+  PATCH:
+    description: 'Generate a patch based on a release version (enter based on release version number)'
+    required: false
+    default: 'false'
+  MAPS:
+    description: 'Maps to build and package (comma separated list of maps)'
+    required: false
+  
 runs:
   using: 'composite'
   steps:
@@ -62,6 +78,10 @@ runs:
         $package = "${{ inputs.PACKAGE }}"
         $archive = "${{ inputs.ARCHIVE }}"
         $archivePath = "${{ inputs.ARCHIVE_PATH }}"
+        $encryptIni = "${{ inputs.ENCRYPT_INI }}"
+        $release = "${{ inputs.RELEASE }}"
+        $patch = "${{ inputs.PATCH }}"
+        $maps = "${{ inputs.MAPS }}"
   
         $serverArg = if ($server -eq 'true') { "-server -serverplatform=$platform -noclient" } else { "" }
         $cookArg = if ($cook -eq 'true') { "-cook" } else { "" }
@@ -69,11 +89,14 @@ runs:
         $pakArg = if ($pak -eq 'true') { "-pak" } else { "" }
         $packageArg = if ($package -eq 'true') { "-package" } else { "" }
         $archiveArg = if ($archive -eq 'true') { "-archive -archivedirectory=$archivePath" } else { "" }
+        $encryptIniArg = if ($encryptIni -eq 'true') { "-encryptinifiles" } else { "" }
+        $releaseArg = if ($release -ne 'false') { "-createreleaseversion=$release" } else { "" }
+        $patchArg = if ($release -ne 'false') { "-generatepatch -basedonreleaseversion=$patch" } else { "" }
   
         $command = "& `"$runUatPath`" BuildCookRun " +
                   "-project=`"$uprojectPath`" " +
-                  "-clientconfig=$buildConfig -serverconfig=$buildConfig -platform=$platform " +
-                  "$serverArg $cookArg $stageArg $pakArg $packageArg $archiveArg " +
-                  "-noP4 -build"
+                  "-clientconfig=$buildConfig -serverconfig=$buildConfig -platform=$platform -map=$maps " +
+                  "$serverArg $cookArg $stageArg $pakArg $packageArg $archiveArg $encryptIniArg $releaseArg $patchArg" +
+                  "-noP4 -build -unattended -nocompileeditor -utf8output -prereqs"
         
         Invoke-Expression $command

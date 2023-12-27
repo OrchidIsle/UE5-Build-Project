@@ -1,4 +1,5 @@
 
+
 # UE5-Build-Project
 
 This GitHub Action, "UE5-Build-Project," is tailored for automating the build processes of Unreal Engine projects. It efficiently handles tasks such as cooking, staging, packaging, creating .pak files, and even archiving projects, offering a robust solution for developers looking to streamline their workflow.
@@ -6,6 +7,7 @@ This GitHub Action, "UE5-Build-Project," is tailored for automating the build pr
 ## How it Works
 
 The action leverages Unreal Engine's `RunUAT.bat` script, providing a flexible interface to configure various build aspects, including the ability to build, cook, stage, package, create .pak files, include a server, and archive the build output.
+
 
 ## Inputs
 
@@ -20,26 +22,34 @@ The action leverages Unreal Engine's `RunUAT.bat` script, providing a flexible i
 -   `SERVER`: Set to `true` to include a dedicated server in your build.
 -   `ARCHIVE`: Set to `true` to archive the build output.
 -   `ARCHIVE_PATH`: Specify the path where the archive should be stored (used only if `ARCHIVE` is `true`).
+-   `ENCRYPT_INI`: Set to `true` to encrypt INI files.
+-   `RELEASE`: Enter new release version number to create a release version.
+-   `PATCH`: Enter the base release version number to generate a patch.
+-   `MAPS`: Comma separated list of maps to build and package.
 
 ## Using the Action
 
 Include this action in your workflow by adding it as a step in your `.github/workflows/main.yml` file:
 
 ```yaml
-`- name: Cook, Stage & Package UE Project
-   uses: OrchidIsle/UE5-Build-Project@latest
-   with:
-     RUNUAT_PATH: 'C:/Unreal Engine/UE5.3_Source/Engine/Build/BatchFiles/RunUAT.bat'
-     UPROJECT_PATH: ${{ github.workspace }}/YourGameFolder/MyGame.uproject
-     BUILD_CONFIG: Development
-     PLATFORM: Win64
-     COOK: true
-     STAGE: true
-     PACKAGE: false
-     PAK: false
-     SERVER: false
-     ARCHIVE: false
-     ARCHIVE_PATH: 'C:/Archives/MyGame'` 
+- name: Cook, Stage & Package UE Project
+  uses: OrchidIsle/UE5-Build-Project@latest
+  with:
+    RUNUAT_PATH: 'C:/Unreal Engine/UE5.3_Source/Engine/Build/BatchFiles/RunUAT.bat'
+    UPROJECT_PATH: ${{ github.workspace }}/YourGameFolder/MyGame.uproject
+    BUILD_CONFIG: Development
+    PLATFORM: Win64
+    COOK: true
+    STAGE: true
+    PACKAGE: false
+    PAK: false
+    SERVER: false
+    ARCHIVE: false
+    ARCHIVE_PATH: 'C:/Archives/MyGame'
+    ENCRYPT_INI: true
+    RELEASE: '1.0.0'
+    PATCH: '0.9.0'
+    MAPS: 'Map1,Map2'
 ```
 
 ## Outputs
