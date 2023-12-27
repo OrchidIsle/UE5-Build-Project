@@ -46,6 +46,10 @@ inputs:
   ARCHIVE_PATH:
     description: 'Archive Path'
     required: false
+  EDITOR:
+    description: 'Whether to compile the editor as well'
+    required: false
+    default: 'true'
   ENCRYPT_INI:
     description: 'Encrypt INI Files'
     required: false
@@ -78,6 +82,7 @@ runs:
         $package = "${{ inputs.PACKAGE }}"
         $archive = "${{ inputs.ARCHIVE }}"
         $archivePath = "${{ inputs.ARCHIVE_PATH }}"
+        $editor = "${{ inputs.EDITOR }}"
         $encryptIni = "${{ inputs.ENCRYPT_INI }}"
         $release = "${{ inputs.RELEASE }}"
         $patch = "${{ inputs.PATCH }}"
@@ -89,6 +94,7 @@ runs:
         $pakArg = if ($pak -eq 'true') { "-pak" } else { "" }
         $packageArg = if ($package -eq 'true') { "-package" } else { "" }
         $archiveArg = if ($archive -eq 'true') { "-archive -archivedirectory=$archivePath" } else { "" }
+        $editorArg = if ($archive -eq 'true') { "-nocompileeditor" } else { "" }
         $encryptIniArg = if ($encryptIni -eq 'true') { "-encryptinifiles" } else { "" }
         $releaseArg = if ($release -ne 'false') { "-createreleaseversion=$release" } else { "" }
         $patchArg = if ($patch -ne 'false') { "-generatepatch -basedonreleaseversion=$patch" } else { "" }
@@ -96,7 +102,7 @@ runs:
         $command = "& `"$runUatPath`" BuildCookRun " +
                   "-project=`"$uprojectPath`" " +
                   "-clientconfig=$buildConfig -serverconfig=$buildConfig -platform=$platform -map=$maps " +
-                  "$serverArg $cookArg $stageArg $pakArg $packageArg $archiveArg $encryptIniArg $releaseArg $patchArg" +
-                  "-noP4 -build -unattended -nocompileeditor -utf8output -prereqs"
+                  "$serverArg $cookArg $stageArg $pakArg $packageArg $archiveArg $editorArg $encryptIniArg $releaseArg $patchArg " +
+                  "-noP4 -build -unattended -utf8output -prereqs"
         
         Invoke-Expression $command
