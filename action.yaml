@@ -91,7 +91,7 @@ runs:
         $archiveArg = if ($archive -eq 'true') { "-archive -archivedirectory=$archivePath" } else { "" }
         $encryptIniArg = if ($encryptIni -eq 'true') { "-encryptinifiles" } else { "" }
         $releaseArg = if ($release -ne 'false') { "-createreleaseversion=$release" } else { "" }
-        $patchArg = if ($release -ne 'false') { "-generatepatch -basedonreleaseversion=$patch" } else { "" }
+        $patchArg = if ($patch -ne 'false') { "-generatepatch -basedonreleaseversion=$patch" } else { "" }
   
         $command = "& `"$runUatPath`" BuildCookRun " +
                   "-project=`"$uprojectPath`" " +
