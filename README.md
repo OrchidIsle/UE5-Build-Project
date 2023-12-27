@@ -22,6 +22,7 @@ The action leverages Unreal Engine's `RunUAT.bat` script, providing a flexible i
 -   `SERVER`: Set to `true` to include a dedicated server in your build.
 -   `ARCHIVE`: Set to `true` to archive the build output.
 -   `ARCHIVE_PATH`: Specify the path where the archive should be stored (used only if `ARCHIVE` is `true`).
+-   `EDITOR` : Set to true to compile the editor as well. Useful for builds requiring editor functionality.
 -   `ENCRYPT_INI`: Set to `true` to encrypt INI files.
 -   `RELEASE`: Enter new release version number to create a release version.
 -   `PATCH`: Enter the base release version number to generate a patch.
@@ -46,6 +47,7 @@ Include this action in your workflow by adding it as a step in your `.github/wor
     SERVER: false
     ARCHIVE: false
     ARCHIVE_PATH: 'C:/Archives/MyGame'
+    EDITOR: true
     ENCRYPT_INI: true
     RELEASE: '1.0.0'
     PATCH: '0.9.0'
