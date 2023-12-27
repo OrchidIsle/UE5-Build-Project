@@ -47,7 +47,7 @@ inputs:
     description: 'Archive Path'
     required: false
   ENCRYPT_INI:
-    description: 'Encrypt INI Files"
+    description: 'Encrypt INI Files'
     required: false
     default: 'true'
   RELEASE:
