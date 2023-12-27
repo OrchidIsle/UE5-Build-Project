@@ -49,7 +49,7 @@ inputs:
   ENCRYPT_INI:
     description: 'Encrypt INI Files'
     required: false
-    default: 'true'
+    default: 'false'
   RELEASE:
     description: 'Create Release Version (Enter new release version number)'
     required: false
