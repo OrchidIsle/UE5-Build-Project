@@ -15,6 +15,7 @@ The action leverages Unreal Engine's `RunUAT.bat` script, providing a flexible i
 -   `UPROJECT_PATH`: Full path to your Unreal Engine project `.uproject` file.
 -   `BUILD_CONFIG`: Build configuration to use, e.g., `Development` or `Shipping`.
 -   `PLATFORM`: Target platform for your build, such as `Win64` or `Linux`.
+-   `CLEAN`: Set to `true` to have your project cleaned before rebuild (default: `false`).
 -   `COOK`: Set to `true` to include cooking in the build process.
 -   `STAGE`: Set to `true` to stage your project.
 -   `PACKAGE`: Set to `true` to execute the packaging process.
@@ -22,11 +23,12 @@ The action leverages Unreal Engine's `RunUAT.bat` script, providing a flexible i
 -   `SERVER`: Set to `true` to include a dedicated server in your build.
 -   `ARCHIVE`: Set to `true` to archive the build output.
 -   `ARCHIVE_PATH`: Specify the path where the archive should be stored (used only if `ARCHIVE` is `true`).
+-   `NULLRHI`: Set to `true` if you don't have a video output (i.e. a screen) such as when running this action in a container on the cloud (default: `false`).
 -   `EDITOR` : Set to true to compile the editor as well. Useful for builds requiring editor functionality.
 -   `ENCRYPT_INI`: Set to `true` to encrypt INI files.
 -   `RELEASE`: Enter new release version number to create a release version.
 -   `PATCH`: Enter the base release version number to generate a patch.
--   `MAPS`: Comma separated list of maps to build and package.
+-   `MAPS`: Comma separated list of maps to build and package, leave empty to build all maps.
 
 ## Using the Action
 
@@ -40,6 +42,7 @@ Include this action in your workflow by adding it as a step in your `.github/wor
     UPROJECT_PATH: ${{ github.workspace }}/YourGameFolder/MyGame.uproject
     BUILD_CONFIG: Development
     PLATFORM: Win64
+    CLEAN: true
     COOK: true
     STAGE: true
     PACKAGE: false
@@ -47,6 +50,7 @@ Include this action in your workflow by adding it as a step in your `.github/wor
     SERVER: false
     ARCHIVE: false
     ARCHIVE_PATH: 'C:/Archives/MyGame'
+    NULLRHI: true
     EDITOR: true
     ENCRYPT_INI: true
     RELEASE: '1.0.0'
