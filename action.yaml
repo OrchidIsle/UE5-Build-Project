@@ -105,7 +105,7 @@ runs:
         $stageArg = if ($stage -eq 'true') { "-stage" } else { "" }
         $pakArg = if ($pak -eq 'true') { "-pak" } else { "" }
         $packageArg = if ($package -eq 'true') { "-package" } else { "" }
-        $archiveArg = if ($archive -eq 'true') { "-archive -archivedirectory=$archivePath" } else { "" }
+        $archiveArg = if ($archive -eq 'true') { "-archive -archivedirectory=`"$archivePath`"" } else { "" }
         $nullrhiArg = if ($nullrhi -eq 'true') { "-nullrhi" } else { "" }
         $editorArg = if ($archive -eq 'true') { "-nocompileeditor" } else { "" }
         $encryptIniArg = if ($encryptIni -eq 'true') { "-encryptinifiles" } else { "" }
