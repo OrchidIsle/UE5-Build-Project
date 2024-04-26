@@ -29,6 +29,7 @@ The action leverages Unreal Engine's `RunUAT.bat` script, providing a flexible i
 -   `RELEASE`: Enter new release version number to create a release version.
 -   `PATCH`: Enter the base release version number to generate a patch.
 -   `MAPS`: Comma separated list of maps to build and package, leave empty to build all maps.
+-   `DELETE_PDB`: Set to `true` to have any PDB files in the StagedBuilds directory purged. (default: `false`).
 
 ## Using the Action
 
@@ -56,6 +57,7 @@ Include this action in your workflow by adding it as a step in your `.github/wor
     RELEASE: '1.0.0'
     PATCH: '0.9.0'
     MAPS: 'Map1,Map2'
+    DELETE_PDB: true
 ```
 
 ## Outputs
