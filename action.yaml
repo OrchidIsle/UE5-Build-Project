@@ -74,6 +74,10 @@ inputs:
     description: 'Maps to build and package (comma separated list of maps, leave empty for all maps)'
     required: false
     default: 'true'
+  DELETE_PDB:
+    description: 'Delete PDB (debug) files'
+    required: false
+    default: 'false'
 
 runs:
   using: 'composite'
@@ -98,6 +102,7 @@ runs:
         $release = "${{ inputs.RELEASE }}"
         $patch = "${{ inputs.PATCH }}"
         $maps = "${{ inputs.MAPS }}"
+        $deletePdb = "${{ inputs.DELETE_PDB }}"
 
         $cleanArg = if ($clean -eq 'true') { "-clean" } else { "" }
         $serverArg = if ($server -eq 'true') { "-server -serverplatform=$platform -noclient" } else { "" }
@@ -120,3 +125,8 @@ runs:
                   "-noP4 -build -unattended -utf8output -prereqs $nullrhiArg"
 
         Invoke-Expression $command
+
+        # Step to delete PDB files if required
+        if ($deletePdb -eq 'true') {
+          Get-ChildItem -Path "$uprojectPath\Saved\StagedBuilds\" -Recurse -Filter *.pdb | Remove-Item -Force
+        }
