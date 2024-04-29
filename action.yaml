@@ -86,6 +86,7 @@ runs:
       run: |
         $runUatPath = "${{ inputs.RUNUAT_PATH }}"
         $uprojectPath = "${{ inputs.UPROJECT_PATH }}"
+        $uprojectDir = Split-Path -Parent $uprojectPath
         $buildConfig = "${{ inputs.BUILD_CONFIG }}"
         $platform = "${{ inputs.PLATFORM }}"
         $clean = "${{ inputs.CLEAN }}"
@@ -126,7 +127,6 @@ runs:
 
         Invoke-Expression $command
 
-        # Step to delete PDB files if required
         if ($deletePdb -eq 'true') {
-          Get-ChildItem -Path "$uprojectPath\Saved\StagedBuilds\" -Recurse -Filter *.pdb | Remove-Item -Force
+          Get-ChildItem -Path "$uprojectDir\Saved\StagedBuilds\" -Recurse -Filter *.pdb | Remove-Item -Force
         }
