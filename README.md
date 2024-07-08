@@ -1,5 +1,3 @@
-
-
 # UE5-Build-Project
 
 This GitHub Action, "UE5-Build-Project," is tailored for automating the build processes of Unreal Engine projects. It efficiently handles tasks such as cooking, staging, packaging, creating .pak files, and even archiving projects, offering a robust solution for developers looking to streamline their workflow.
@@ -7,7 +5,6 @@ This GitHub Action, "UE5-Build-Project," is tailored for automating the build pr
 ## How it Works
 
 The action leverages Unreal Engine's `RunUAT.bat` script, providing a flexible interface to configure various build aspects, including the ability to build, cook, stage, package, create .pak files, include a server, and archive the build output.
-
 
 ## Inputs
 
@@ -24,12 +21,15 @@ The action leverages Unreal Engine's `RunUAT.bat` script, providing a flexible i
 -   `ARCHIVE`: Set to `true` to archive the build output.
 -   `ARCHIVE_PATH`: Specify the path where the archive should be stored (used only if `ARCHIVE` is `true`).
 -   `NULLRHI`: Set to `true` if you don't have a video output (i.e. a screen) such as when running this action in a container on the cloud (default: `false`).
--   `EDITOR` : Set to true to compile the editor as well. Useful for builds requiring editor functionality.
+-   `EDITOR` : Set to `true` to compile the editor as well. Useful for builds requiring editor functionality.
 -   `ENCRYPT_INI`: Set to `true` to encrypt INI files.
 -   `RELEASE`: Enter new release version number to create a release version.
 -   `PATCH`: Enter the base release version number to generate a patch.
 -   `MAPS`: Comma separated list of maps to build and package, leave empty to build all maps.
--   `DELETE_PDB`: Set to `true` to have any PDB files in the StagedBuilds directory purged. (default: `false`).
+-   `DELETE_PDB`: Set to `true` to have any PDB files in the StagedBuilds directory purged (default: `false`).
+-   `ANTICHEAT_ENABLED`: Set to `true` to enable anticheat functionality (default: `false`).
+-   `ANTICHEAT_PRIVATE_KEY`: Base64 encoded private key for anticheat (required if `ANTICHEAT_ENABLED` is `true`).
+-   `ANTICHEAT_PUBLIC_CERT`: Base64 encoded public certificate for anticheat (required if `ANTICHEAT_ENABLED` is `true`).
 
 ## Using the Action
 
@@ -58,6 +58,9 @@ Include this action in your workflow by adding it as a step in your `.github/wor
     PATCH: '0.9.0'
     MAPS: 'Map1,Map2'
     DELETE_PDB: true
+    ANTICHEAT_ENABLED: true
+    ANTICHEAT_PRIVATE_KEY: 'base64encodedprivatekey'
+    ANTICHEAT_PUBLIC_CERT: 'base64encodedpubliccert'
 ```
 
 ## Outputs
