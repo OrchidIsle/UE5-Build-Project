@@ -124,7 +124,7 @@ runs:
             New-Item -Path $anticheatDir -ItemType Directory -Force
           }
           $privateKeyPath = "$anticheatDir\base_private.key"
-          $publicCertPath = "$anticheatDir\base_public.cert"
+          $publicCertPath = "$anticheatDir\base_public.cer"
           [System.IO.File]::WriteAllBytes($privateKeyPath, [System.Convert]::FromBase64String($anticheatPrivateKey))
           [System.IO.File]::WriteAllBytes($publicCertPath, [System.Convert]::FromBase64String($anticheatPublicCert))
           Write-Output "Anticheat keys have been written to $anticheatDir"
