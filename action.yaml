@@ -19,6 +19,10 @@ inputs:
   PLATFORM:
     description: 'Platform to build for'
     required: true
+  CLEAN:
+    description: 'Whether to clean'
+    required: false
+    default: 'false'
   COOK:
     description: 'Whether to cook'
     required: false
@@ -46,6 +50,10 @@ inputs:
   ARCHIVE_PATH:
     description: 'Archive Path'
     required: false
+  NULLRHI:
+    description: 'Whether to execute commands without video output'
+    required: false
+    default: 'false'
   EDITOR:
     description: 'Whether to compile the editor as well'
     required: false
@@ -63,9 +71,24 @@ inputs:
     required: false
     default: 'false'
   MAPS:
-    description: 'Maps to build and package (comma separated list of maps)'
+    description: 'Maps to build and package (comma separated list of maps, leave empty for all maps)'
     required: false
-  
+    default: 'true'
+  DELETE_PDB:
+    description: 'Delete PDB (debug) files'
+    required: false
+    default: 'false'
+  ANTICHEAT_ENABLED:
+    description: 'Enable anticheat'
+    required: false
+    default: 'false'
+  ANTICHEAT_PRIVATE_KEY:
+    description: 'Base64 encoded private key for anticheat'
+    required: false
+  ANTICHEAT_PUBLIC_CERT:
+    description: 'Base64 encoded public certificate for anticheat'
+    required: false
+
 runs:
   using: 'composite'
   steps:
@@ -73,8 +96,10 @@ runs:
       run: |
         $runUatPath = "${{ inputs.RUNUAT_PATH }}"
         $uprojectPath = "${{ inputs.UPROJECT_PATH }}"
+        $uprojectDir = Split-Path -Parent $uprojectPath
         $buildConfig = "${{ inputs.BUILD_CONFIG }}"
         $platform = "${{ inputs.PLATFORM }}"
+        $clean = "${{ inputs.CLEAN }}"
         $server = "${{ inputs.SERVER }}"
         $cook = "${{ inputs.COOK }}"
         $stage = "${{ inputs.STAGE }}"
@@ -82,27 +107,53 @@ runs:
         $package = "${{ inputs.PACKAGE }}"
         $archive = "${{ inputs.ARCHIVE }}"
         $archivePath = "${{ inputs.ARCHIVE_PATH }}"
+        $nullrhi = "${{ inputs.NULLRHI }}"
         $editor = "${{ inputs.EDITOR }}"
         $encryptIni = "${{ inputs.ENCRYPT_INI }}"
         $release = "${{ inputs.RELEASE }}"
         $patch = "${{ inputs.PATCH }}"
         $maps = "${{ inputs.MAPS }}"
-  
+        $deletePdb = "${{ inputs.DELETE_PDB }}"
+        $anticheatEnabled = "${{ inputs.ANTICHEAT_ENABLED }}"
+        $anticheatPrivateKey = "${{ inputs.ANTICHEAT_PRIVATE_KEY }}"
+        $anticheatPublicCert = "${{ inputs.ANTICHEAT_PUBLIC_CERT }}"
+
+        if ($anticheatEnabled -eq 'true') {
+          $anticheatDir = "$uprojectDir\Build\NoRedist"
+          if (-Not (Test-Path -Path $anticheatDir)) {
+            New-Item -Path $anticheatDir -ItemType Directory -Force
+          }
+          $privateKeyPath = "$anticheatDir\base_private.key"
+          $publicCertPath = "$anticheatDir\base_public.cer"
+          [System.IO.File]::WriteAllBytes($privateKeyPath, [System.Convert]::FromBase64String($anticheatPrivateKey))
+          [System.IO.File]::WriteAllBytes($publicCertPath, [System.Convert]::FromBase64String($anticheatPublicCert))
+          Write-Output "Anticheat keys have been written to $anticheatDir"
+        }
+
+        $cleanArg = if ($clean -eq 'true') { "-clean" } else { "" }
         $serverArg = if ($server -eq 'true') { "-server -serverplatform=$platform -noclient" } else { "" }
         $cookArg = if ($cook -eq 'true') { "-cook" } else { "" }
         $stageArg = if ($stage -eq 'true') { "-stage" } else { "" }
         $pakArg = if ($pak -eq 'true') { "-pak" } else { "" }
         $packageArg = if ($package -eq 'true') { "-package" } else { "" }
-        $archiveArg = if ($archive -eq 'true') { "-archive -archivedirectory=$archivePath" } else { "" }
+        $archiveArg = if ($archive -eq 'true') { "-archive -archivedirectory=`"$archivePath`"" } else { "" }
+        $nullrhiArg = if ($nullrhi -eq 'true') { "-nullrhi" } else { "" }
         $editorArg = if ($archive -eq 'true') { "-nocompileeditor" } else { "" }
         $encryptIniArg = if ($encryptIni -eq 'true') { "-encryptinifiles" } else { "" }
         $releaseArg = if ($release -ne 'false') { "-createreleaseversion=$release" } else { "" }
         $patchArg = if ($patch -ne 'false') { "-generatepatch -basedonreleaseversion=$patch" } else { "" }
-  
+        $mapsArg = if ($maps -eq 'true') { "" } else { "-map=$maps" }
+
         $command = "& `"$runUatPath`" BuildCookRun " +
                   "-project=`"$uprojectPath`" " +
-                  "-clientconfig=$buildConfig -serverconfig=$buildConfig -platform=$platform -map=$maps " +
-                  "$serverArg $cookArg $stageArg $pakArg $packageArg $archiveArg $editorArg $encryptIniArg $releaseArg $patchArg " +
-                  "-noP4 -build -unattended -utf8output -prereqs"
-        
+                  "-clientconfig=$buildConfig -serverconfig=$buildConfig -platform=$platform $mapsArg " +
+                  "$cleanArg $serverArg $cookArg $stageArg $pakArg $packageArg $archiveArg $editorArg $encryptIniArg $releaseArg $patchArg " +
+                  "-noP4 -build -unattended -utf8output -prereqs $nullrhiArg"
+
+        Write-Output "Executing command: $command"
+
         Invoke-Expression $command
+
+        if ($deletePdb -eq 'true') {
+          Get-ChildItem -Path "$uprojectDir\Saved\StagedBuilds\" -Recurse -Filter *.pdb | Remove-Item -Force
+        }
