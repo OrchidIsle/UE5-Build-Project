@@ -78,6 +78,16 @@ inputs:
     description: 'Delete PDB (debug) files'
     required: false
     default: 'false'
+  ANTICHEAT_ENABLED:
+    description: 'Enable anticheat'
+    required: false
+    default: 'false'
+  ANTICHEAT_PRIVATE_KEY:
+    description: 'Base64 encoded private key for anticheat'
+    required: false
+  ANTICHEAT_PUBLIC_CERT:
+    description: 'Base64 encoded public certificate for anticheat'
+    required: false
 
 runs:
   using: 'composite'
@@ -104,6 +114,21 @@ runs:
         $patch = "${{ inputs.PATCH }}"
         $maps = "${{ inputs.MAPS }}"
         $deletePdb = "${{ inputs.DELETE_PDB }}"
+        $anticheatEnabled = "${{ inputs.ANTICHEAT_ENABLED }}"
+        $anticheatPrivateKey = "${{ inputs.ANTICHEAT_PRIVATE_KEY }}"
+        $anticheatPublicCert = "${{ inputs.ANTICHEAT_PUBLIC_CERT }}"
+
+        if ($anticheatEnabled -eq 'true') {
+          $anticheatDir = "$uprojectDir\Build\NoRedist"
+          if (-Not (Test-Path -Path $anticheatDir)) {
+            New-Item -Path $anticheatDir -ItemType Directory -Force
+          }
+          $privateKeyPath = "$anticheatDir\base_private.key"
+          $publicCertPath = "$anticheatDir\base_public.cert"
+          [System.IO.File]::WriteAllBytes($privateKeyPath, [System.Convert]::FromBase64String($anticheatPrivateKey))
+          [System.IO.File]::WriteAllBytes($publicCertPath, [System.Convert]::FromBase64String($anticheatPublicCert))
+          Write-Output "Anticheat keys have been written to $anticheatDir"
+        }
 
         $cleanArg = if ($clean -eq 'true') { "-clean" } else { "" }
         $serverArg = if ($server -eq 'true') { "-server -serverplatform=$platform -noclient" } else { "" }
