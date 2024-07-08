@@ -1,14 +1,90 @@
+name: 'UE5-Build-Project'
+description: 'Cook, stage, and package projects for Unreal Engine'
+author: 'Orchid Isle Games'
+branding:
+  icon: 'anchor'
+  color: 'green'
+
+inputs:
+  RUNUAT_PATH:
+    description: 'Path to RunUAT.bat'
+    required: true
+  UPROJECT_PATH:
+    description: 'Path to the .uproject file'
+    required: true
+  BUILD_CONFIG:
+    description: 'Configuration to use'
+    required: true
+    default: 'Development'
+  PLATFORM:
+    description: 'Platform to build for'
+    required: true
+  CLEAN:
+    description: 'Whether to clean'
+    required: false
+    default: 'false'
+  COOK:
+    description: 'Whether to cook'
+    required: false
+    default: 'true'
+  STAGE:
+    description: 'Whether to stage'
+    required: false
+    default: 'true'
+  PACKAGE:
+    description: 'Whether to package'
+    required: false
+    default: 'false'
+  PAK:
+    description: 'Whether to pak files'
+    required: false
+    default: 'false'
+  SERVER:
+    description: 'Whether to include the server'
+    required: false
+    default: 'false'
+  ARCHIVE:
+    description: 'Whether to archive'
+    required: false
+    default: 'false'
+  ARCHIVE_PATH:
+    description: 'Archive Path'
+    required: false
+  NULLRHI:
+    description: 'Whether to execute commands without video output'
+    required: false
+    default: 'false'
+  EDITOR:
+    description: 'Whether to compile the editor as well'
+    required: false
+    default: 'true'
+  ENCRYPT_INI:
+    description: 'Encrypt INI Files'
+    required: false
+    default: 'false'
+  RELEASE:
+    description: 'Create Release Version (Enter new release version number)'
+    required: false
+    default: 'false'
+  PATCH:
+    description: 'Generate a patch based on a release version (enter based on release version number)'
+    required: false
+    default: 'false'
+  MAPS:
+    description: 'Maps to build and package (comma separated list of maps, leave empty for all maps)'
+    required: false
+    default: 'true'
+  DELETE_PDB:
+    description: 'Delete PDB (debug) files'
+    required: false
+    default: 'false'
+
 runs:
   using: 'composite'
   steps:
     - shell: powershell
       run: |
         $runUatPath = "${{ inputs.RUNUAT_PATH }}"
-        if (-not (Test-Path $runUatPath)) {
-          Write-Error "RunUAT.bat path is invalid: $runUatPath"
-          exit 1
-        }
-
         $uprojectPath = "${{ inputs.UPROJECT_PATH }}"
         $uprojectDir = Split-Path -Parent $uprojectPath
         $buildConfig = "${{ inputs.BUILD_CONFIG }}"
@@ -35,7 +111,7 @@ runs:
         $stageArg = if ($stage -eq 'true') { "-stage" } else { "" }
         $pakArg = if ($pak -eq 'true') { "-pak" } else { "" }
         $packageArg = if ($package -eq 'true') { "-package" } else { "" }
-        $archiveArg = if ($archive -eq 'true') { "-archive -archivedirectory=`"$archivePath`"" } else { "" }
+        $archiveArg = if ($archive -eq 'true') { "-archive -archivedirectory="$archivePath"" } else { "" }
         $nullrhiArg = if ($nullrhi -eq 'true') { "-nullrhi" } else { "" }
         $editorArg = if ($archive -eq 'true') { "-nocompileeditor" } else { "" }
         $encryptIniArg = if ($encryptIni -eq 'true') { "-encryptinifiles" } else { "" }
@@ -43,13 +119,12 @@ runs:
         $patchArg = if ($patch -ne 'false') { "-generatepatch -basedonreleaseversion=$patch" } else { "" }
         $mapsArg = if ($maps -eq 'true') { "" } else { "-map=$maps" }
 
-        $command = "& `"$runUatPath`" BuildCookRun " +
-                  "-project=`"$uprojectPath`" " +
+        $command = "& "$runUatPath" BuildCookRun " +
+                  "-project="$uprojectPath" " +
                   "-clientconfig=$buildConfig -serverconfig=$buildConfig -platform=$platform $mapsArg " +
                   "$cleanArg $serverArg $cookArg $stageArg $pakArg $packageArg $archiveArg $editorArg $encryptIniArg $releaseArg $patchArg " +
                   "-noP4 -build -unattended -utf8output -prereqs $nullrhiArg"
 
-        Write-Output "Constructed Command: $command"
         Invoke-Expression $command
 
         if ($deletePdb -eq 'true') {
